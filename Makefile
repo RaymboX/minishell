@@ -43,7 +43,9 @@ NAME_DSYM		=	./$(NAME).dSYM
 #FILES--------------------------------------------------------------------------
 
 SRCS_FILES	 	= 	0_main.c
-					#
+
+HEADERS_FILES	=	minishell.h
+
 #SRCS_FILES_BONUS= 	
 
 LIBFT_FILES		= 	libft.a
@@ -51,6 +53,8 @@ LIBFT_FILES		= 	libft.a
 #FILES VAR----------------------------------------------------------------------
 SRCS 			= 	$(addprefix $(SRCS_DIR)/, $(SRCS_FILES))
 #SRCS_BONUS		=	$(addprefix $(SRCS_DIR_BONUS)/, $(SRCS_FILES_BONUS))
+
+HEADERS			=	$(addprefix $(INCLUDE_DIR)/, $(HEADERS_FILES))
 
 OBJS 			= 	$(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
 OBJS_BONUS 		= 	$(SRCS_BONUS:$(SRCS_DIR_BONUS)/%.c=$(OBJS_DIR_BONUS)/%.o)
@@ -61,11 +65,11 @@ LIBFT_LINUX		=	-L$(REL_PATH)/libft -lft
 
 #SYSTEM RULES-------------------------------------------------------------------
 
-$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
+$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c $(HEADERS)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJS_DIR_BONUS)/%.o: $(SRCS_DIR_BONUS)/%.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+#$(OBJS_DIR_BONUS)/%.o: $(SRCS_DIR_BONUS)/%.c
+#	@$(CC) $(CFLAGS) -c $< -o $@
 
 #COMPILING RULES------------------------------------------------------------------
 

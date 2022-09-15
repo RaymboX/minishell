@@ -20,16 +20,23 @@ void	handle_sigquit(int sig)
 
 void	signal_handler(t_var *var)
 {
-	var->sa_int.sa_handler = &handle_sigint;
-	sigaction(SIGINT, &var->sa_int, NULL);
 	var->sa_quit.sa_handler = &handle_sigquit;
 	sigaction(SIGQUIT, &var->sa_quit, NULL);
+	var->sa_quit.sa_flags = 0;
+	sigemptyset(&var->sa_quit.sa_mask);
+	
+	var->sa_int.sa_handler = &handle_sigint;
+	sigaction(SIGINT, &var->sa_int, NULL);
+	var->sa_int.sa_flags = 0;
+	sigemptyset(&var->sa_int.sa_mask);
+
+	
 	//signal(SIGINT, &handle_sigtstp);
 }
 
 void	cmd_line_show(t_var *var)
 {
-	var->cmd_line = readline("RBX_SHELL > ");
+	var->cmd_line = readline("   RBX_SHELL > ");
 	add_history(var->cmd_line);
 }
 
