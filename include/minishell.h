@@ -6,7 +6,7 @@
 /*   By: mraymond <mraymond@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/15 09:09:51 by mraymond          #+#    #+#             */
-/*   Updated: 2022/09/15 14:52:02 by mraymond         ###   ########.fr       */
+/*   Updated: 2022/09/21 10:33:15 by mraymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
 # include <readline/history.h>
 # include <stdlib.h>
 # include "libft/header/libft.h"
-# include "signal.h"
+# include <signal.h>
+# include <errno.h>
 
 
 //debug
