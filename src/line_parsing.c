@@ -1,14 +1,4 @@
-# include <unistd.h>
-# include <fcntl.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <stdlib.h>
-# include <signal.h>
-# include <errno.h>
-#include <stdio.h>
-#include <../include/libft/header/libft.h>
-
-
+#include "../include/minishell.h"
 
 //return if position in line str is inside quote(return 1) or outside(return 0)
 int	in_quotes(char *line, int position)
@@ -77,19 +67,39 @@ int	len_next_quote(char *first_quote_position, char quote)
 	return (i);
 }
 
-#define METALIST '=<>|$'
+/* if meta, return ascii char or if two char meta, char * char else return -1
+cover meta | < << > >> $ */
+int	meta_case(char *line)
+{
+	static char	*meta_list = "|<>$";
+	int			ret_val;
 
-int	is_meta(char c, char *meta_list)
+	if (ft_strrchr_i(meta_list, line[0]) >= 0)
+	{
+		if ((line[0] == line[1] && (line[1] == '<' || line['>'])))
+			return ((int)line[0] * (int)line[1]);
+		return ((int)line[0]);
+	}
+	return (-1);
+}
 
+//return 0 if valid error code else
 int	valid_line(char *line)
 {
-	//1) len check -> if len = 0, return 1 that let program reprompt w/o error
-	//1) quote checking
-	//2) meta checker -> check for never allowed expression
+	if (!line || ft_strlen(line) == 0);
+		return (1);
+	if (valid_quotes(line) != 0)
+		//error quote;
+	//
+	
+
 }
+
+
 
 void	tokeniser(char *line)
 {
-
+	int	i
 }
+
 

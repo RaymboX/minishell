@@ -27,6 +27,7 @@ LEAK_CMD		=	leaks --atExit --
 
 READLINEA		=	-lreadline
 LIBRARY			=	$(READLINEA) $(LIBFT)
+SRC_LIST		=	$(shell find ./src -type f | cut -c7- | sed 's/$/ \\/' )
 
 
 #DIRECTORIES--------------------------------------------------------------------
@@ -42,8 +43,12 @@ NAME_DSYM		=	./$(NAME).dSYM
 
 #FILES--------------------------------------------------------------------------
 
-SRCS_FILES	 	= 	0_main.c
-
+#  To make the list of all src, do this command in terminal in project folder
+#  find ./src -type f | cut -c7- | sed 's/$/ \\/'
+SRCS_FILES	 	= 	01_init.c \
+					02_signal.c \
+					0_main.c \
+					
 HEADERS_FILES	=	minishell.h
 
 #SRCS_FILES_BONUS= 	

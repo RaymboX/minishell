@@ -6,7 +6,7 @@
 /*   By: mraymond <mraymond@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/15 09:09:51 by mraymond          #+#    #+#             */
-/*   Updated: 2022/09/21 10:33:15 by mraymond         ###   ########.fr       */
+/*   Updated: 2022/10/04 10:44:20 by mraymond         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 
 //Message
 # define NOARGALLOWED "Don't care about your extra argument. Show must go on!\n"
-# define WELCOME "Welcome to RaymboX's Minishell. Hope you enjoy!\n"
+# define WELCOME "Welcome to Minishell. Hope you enjoy!\n"
 
 
 //struct
@@ -43,5 +43,13 @@ typedef struct s_var
 	struct sigaction	sa_int;
 }				t_var;
 
+typedef struct s_token
+{
+	int		type;
+	char	*str;
+	char	**dbl_str;
+	
+	
+}				t_token;
 
 #endif
