@@ -1,12 +1,6 @@
 #PROGRAM NAME-------------------------------------------------------------------
 
 NAME 			= 	minishell
-#NAME_BONUS		=	$(NAME)_bonus
-
-#OPTIONS------------------------------------------------------------------------
-
-#PROJECT HAVE (no:n yes:y)
-#HAVE_LIBFT		= y
 
 #SYSTEM VAR---------------------------------------------------------------------
 
@@ -25,10 +19,7 @@ UNAME_S		 	= 	$(shell uname -s)
 REL_PATH		=	$(shell pwd)
 LEAK_CMD		=	leaks --atExit --
 
-READLINEA		=	-lreadline
-LIBRARY			=	$(READLINEA) $(LIBFT)
-SRC_LIST		=	$(shell find ./src -type f | cut -c7- | sed 's/$/ \\/' )
-
+LIBRARY			=	$(LIBRD) -lcurses $(LIBFT)
 
 #DIRECTORIES--------------------------------------------------------------------
 
@@ -36,105 +27,118 @@ SRCS_DIR 		= 	./src
 OBJS_DIR		= 	./obj
 INCLUDE_DIR		=	./include
 LIBFT_DIR		= 	$(INCLUDE_DIR)/libft
-NAME_DSYM		=	./$(NAME).dSYM
+LIBRD_DIR		=	$(INCLUDE_DIR)/librd
 
-#SRCS_DIR_BONUS	= 	./bonus/src
-#OBJS_DIR_BONUS	= 	./bonus/obj
+NAME_DSYM		=	./$(NAME).dSYM
 
 #FILES--------------------------------------------------------------------------
 
 #  To make the list of all src, do this command in terminal in project folder
-#  find ./src -type f | cut -c7- | sed 's/$/ \\/'
-SRCS_FILES	 	= 	01_init.c \
+#  find ./src/*.c -type f | cut -c7- | sed 's/$/ \\/'
+SRCS_FILES	 	= 	0_main.c \
+					01_init.c \
+					01_valid_line.c \
 					02_signal.c \
-					0_main.c \
-					
+					03_convert_env_var.c \
+					03_format_line.c \
+					03_get_cmd_path.c \
+					03_get_fds.c \
+					03_parse.c \
+					03_parse_utils.c \
+					03_split_cmds.c \
+					03_split_quotes.c \
+					03_utils2.c \
+					04_builtin_frame.c \
+					04_cd.c \
+					04_echo.c \
+					04_export.c \
+					04_unset.c \
+					04_env_utils.c \
+					04_exit.c \
+					04_pwd.c \
+					05_child_exec.c \
+					05_exec.c \
+					05_exec_utils.c \
+					05_here_doc.c \
+					05_redirection.c \
+
 HEADERS_FILES	=	minishell.h
 
-#SRCS_FILES_BONUS= 	
-
 LIBFT_FILES		= 	libft.a
+LIBRD_FILES		=	libreadline.a \
+					libhistory.a
+
 
 #FILES VAR----------------------------------------------------------------------
 SRCS 			= 	$(addprefix $(SRCS_DIR)/, $(SRCS_FILES))
-#SRCS_BONUS		=	$(addprefix $(SRCS_DIR_BONUS)/, $(SRCS_FILES_BONUS))
 
 HEADERS			=	$(addprefix $(INCLUDE_DIR)/, $(HEADERS_FILES))
 
 OBJS 			= 	$(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
-OBJS_BONUS 		= 	$(SRCS_BONUS:$(SRCS_DIR_BONUS)/%.c=$(OBJS_DIR_BONUS)/%.o)
 
 LIBFT 			= 	$(addprefix $(LIBFT_DIR)/, $(LIBFT_FILES))
+LIBRD_MAKEFILE	=	$(addprefix $(LIBRD_DIR)/, Makefile)
+LIBRD			=	$(addprefix $(LIBRD_DIR)/, $(LIBRD_FILES))
 
-LIBFT_LINUX		=	-L$(REL_PATH)/libft -lft
+RD_CONFIG		=	include/librd/Makefile
 
 #SYSTEM RULES-------------------------------------------------------------------
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c $(HEADERS)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-#$(OBJS_DIR_BONUS)/%.o: $(SRCS_DIR_BONUS)/%.c
-#	@$(CC) $(CFLAGS) -c $< -o $@
+#$(V).SILENT:
 
 #COMPILING RULES------------------------------------------------------------------
 
-all : 				init $(NAME)
+all : 				init $(LIBRD_MAKEFILE) $(LIBRD) $(NAME)
+
+$(LIBRD): 			$(LIBRD_MAKEFILE)
+					@echo "$ZReadline's libraries compiling$W"
+					@$(MAKE) -s -C $(LIBRD_DIR)
+					@echo "$GReadline's libraries compiled$W"
+
+$(LIBRD_MAKEFILE):
+					@echo "$ZReadline          configuring$W"
+					@cd $(LIBRD_DIR) && ./configure --silent
+					@echo "$GReadline          configured$W"
 
 init:
 					@$(MAKE) -s -C $(LIBFT_DIR)
 					@mkdir -p $(OBJS_DIR)
+					
 
 $(NAME):			$(OBJS) 
-ifeq ($(UNAME_S),Linux)
-					@gcc $(CFLAGS) libft/*c $(SRCS) -o $(NAME) $(READLINEA)
-else
 					@$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBRARY)
-endif
-					@echo "$G$(NAME)         compiled$W"
+					@echo "$G$(NAME)            compiled$W"
 					
 $(LIBFT):
 					@cd $(LIBFT_DIR)/ && make
 					
 
-clean:
-ifneq ($(wildcard $(OBJS_DIR)),)									
+clean:									
 					@$(MAKE) -s clean -C $(LIBFT_DIR)
 					@$(RM) $(OBJS)
 					@$(RM) $(OBJS_DIR)
-					@$(RM) $(OBJS_BONUS)
-					@$(RM) $(OBJS_DIR_BONUS)
-					@echo "$R$(NAME) objects deleted$W"
-endif
+					@echo "$R$ All objects       deleted$W"
 
 fclean: 			clean
-ifneq ($(wildcard $(NAME)),)					
 					@$(MAKE) -s fclean -C $(LIBFT_DIR)
+					@$(MAKE) -s clean -C $(LIBRD_DIR)
 					@$(RM) $(NAME_DSYM)
 					@$(RM) $(NAME)
-					@$(RM) $(NAME_BONUS)
-					@echo "$R$(NAME)         deleted$W"
-endif
-	
+					@echo "$R$(NAME) & lib   deleted$W"
+
+reset:				fclean
+					@$(MAKE) -s distclean -C $(LIBRD_DIR)
+					@echo "$R$ readline lib      reseted$W"
+
 re: 				fclean all
 
-#bonus:				init_bonus $(NAME_BONUS)
-
-#init_bonus:
-#					@$(MAKE) -s -C $(LIBFT_DIR)
-#					@mkdir -p $(OBJS_DIR_BONUS)
-
-#$(NAME_BONUS):		$(OBJS_BONUS)
-#					@gcc $(CFLAGS) libft/*c $(SRCS_BONUS) -o $(NAME_BONUS)
-#					@echo "$G$(NAME_BONUS) compiled$W"
-
-debug:
-ifeq ($(HAVE_LIBFT),y)
-					gcc -g $(CFLAGS) libft/*c $(SRCS) -o $(NAME)
-else
-					gcc -g $(CFLAGS) $(SRCS) -o $(NAME)
-endif
+debug: $(LIBFT)
+				gcc -g $(CFLAGS) $(LIBRARY) $(SRCS) -o $(NAME)
 
 #PHONY--------------------------------------------------------------------------
 
-.PHONY:				all clean fclean re bonus init init_bonus debug
+.PHONY:				all clean fclean re init debug reset
 
